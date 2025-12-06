@@ -1,11 +1,15 @@
-import 'package:sqflite/sqflite.dart' as sqflite;
+import 'dart:io';
+
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseFactory {
   static final DatabaseFactory _instance = DatabaseFactory._internal();
-  static sqflite.Database? _database; // ← FIX: Use sqflite.Database
+  static sqflite.Database? _database;
   static const String _dbName = 'app_produtividade.db';
-  static const int _dbVersion = 1;
+  static const int _dbVersion = 2;
+  static bool _ffiInitialized = false;
 
   factory DatabaseFactory() {
     return _instance;
@@ -24,8 +28,27 @@ class DatabaseFactory {
 
   /// Inicializa o banco de dados
   Future<sqflite.Database> _initDatabase() async {
-    final dbPath = await sqflite
-        .getDatabasesPath(); // ← FIX: sqflite.getDatabasesPath()
+    // Em desktop é obrigatório inicializar o factory FFI antes de usar sqflite
+    if (!_ffiInitialized &&
+        (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+      sqfliteFfiInit();
+      sqflite.databaseFactory = databaseFactoryFfi;
+      _ffiInitialized = true;
+    }
+
+    // Sqflite não funciona no Web
+    if (Platform.isWindows ||
+        Platform.isLinux ||
+        Platform.isMacOS ||
+        Platform.isAndroid ||
+        Platform.isIOS ||
+        Platform.isFuchsia) {
+      // ok
+    } else {
+      throw UnsupportedError('Plataforma não suportada pelo sqflite');
+    }
+
+    final dbPath = await sqflite.getDatabasesPath();
     final path = join(dbPath, _dbName);
 
     return await sqflite.openDatabase(
@@ -57,6 +80,7 @@ class DatabaseFactory {
         description TEXT,
         is_completed INTEGER DEFAULT 0,
         priority INTEGER DEFAULT 1,
+        quadrant INTEGER DEFAULT 1,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -74,7 +98,12 @@ class DatabaseFactory {
     int oldVersion,
     int newVersion,
   ) async {
-    // Implementar migrações aqui quando necessário
+    if (oldVersion < 2) {
+      // Adiciona coluna quadrant se não existir
+      await db.execute(
+        "ALTER TABLE tasks ADD COLUMN quadrant INTEGER DEFAULT 1",
+      );
+    }
   }
 
   /// Fecha a conexão com o banco
@@ -87,8 +116,7 @@ class DatabaseFactory {
 
   /// Limpa o banco (útil para testes)
   Future<void> deleteDatabase() async {
-    final dbPath = await sqflite
-        .getDatabasesPath(); // ← FIX: sqflite.getDatabasesPath()
+    final dbPath = await sqflite.getDatabasesPath();
     final path = join(dbPath, _dbName);
     await sqflite.deleteDatabase(path);
   }

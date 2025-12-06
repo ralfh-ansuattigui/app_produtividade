@@ -1,7 +1,7 @@
 import 'database_factory.dart' as dbfactory;
 
 class DatabaseInitializer {
-  /// Inicializa o banco de dados com tratamento robusto de erros
+  /// Inicializa o banco de dados
   static Future<bool> initialize() async {
     try {
       final databaseFactory = dbfactory.DatabaseFactory();
