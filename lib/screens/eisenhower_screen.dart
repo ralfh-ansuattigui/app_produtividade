@@ -134,7 +134,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     double spacing,
     bool isCompact,
   ) {
-    final quadrantTasks = tasksNotifier.getByQuadrant(quadrant['number'] as int);
+    final quadrantTasks = tasksNotifier.getByQuadrant(
+      quadrant['number'] as int,
+    );
 
     return QuadrantCard(
       title: quadrant['title'] as String,
@@ -151,12 +153,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     showDialog(
       context: context,
       builder: (ctx) => TaskDialog(
-        onSave: (title, description) async {
+        initialQuadrant: quadrant,
+        onSave: (title, description, selectedQuadrant) async {
           final task = Task(
             userId: 1, // TODO: get from auth provider
             title: title,
             description: description,
-            quadrant: quadrant,
+            quadrant: selectedQuadrant,
           );
           if (context.mounted) {
             await context.read<TasksNotifier>().createTask(task);
