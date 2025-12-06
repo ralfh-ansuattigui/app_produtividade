@@ -144,14 +144,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       color: quadrant['color'] as Color,
       tasks: quadrantTasks,
       onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
-      onTaskMoved: (task, newQuadrant) => _moveTask(tasksNotifier, task, newQuadrant),
+      onTaskMoved: (task, newQuadrant) =>
+          _moveTask(tasksNotifier, task, newQuadrant),
       onAddTask: () =>
           _showAddTaskDialog(context, quadrant: quadrant['number'] as int),
       isCompact: isCompact,
     );
   }
 
-  void _moveTask(TasksNotifier tasksNotifier, Task task, int newQuadrant) async {
+  void _moveTask(
+    TasksNotifier tasksNotifier,
+    Task task,
+    int newQuadrant,
+  ) async {
     await tasksNotifier.moveTask(task.id!, newQuadrant);
   }
 
@@ -160,12 +165,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       context: context,
       builder: (ctx) => TaskDialog(
         initialQuadrant: quadrant,
-        onSave: (title, description, selectedQuadrant) async {
+        onSave: (title, description, selectedQuadrant, dueDate) async {
           final task = Task(
             userId: 1, // TODO: get from auth provider
             title: title,
             description: description,
             quadrant: selectedQuadrant,
+            dueDate: dueDate,
           );
           if (context.mounted) {
             await context.read<TasksNotifier>().createTask(task);
@@ -195,8 +201,42 @@ class _TaskDetailDialog extends StatelessWidget {
 
   const _TaskDetailDialog({required this.task, required this.tasksNotifier});
 
+  String _getQuadrantName(int quadrant) {
+    switch (quadrant) {
+      case 1:
+        return 'Urgente e Importante';
+      case 2:
+        return 'Não Urgente e Importante';
+      case 3:
+        return 'Urgente e Não Importante';
+      case 4:
+        return 'Não Urgente e Não Importante';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
+  String _getDueStatusMessage() {
+    final status = task.getDueStatus();
+    switch (status) {
+      case DueStatus.overdue:
+        return '⚠️ VENCIDA';
+      case DueStatus.today:
+        return '⏰ Vence HOJE';
+      case DueStatus.oneDay:
+        return '📅 Vence em 1 dia';
+      case DueStatus.twoDays:
+        return '📅 Vence em 2 dias';
+      case DueStatus.ok:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dueStatusMessage = _getDueStatusMessage();
+    final hasDueWarning = task.getDueStatus() != DueStatus.ok;
+    
     return AlertDialog(
       title: Text(task.title),
       content: Column(
@@ -208,7 +248,55 @@ class _TaskDetailDialog extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(task.description!),
             ),
-          Text('Quadrante: ${task.quadrant}'),
+          Text('Quadrante: ${_getQuadrantName(task.quadrant)}'),
+          if (task.dueDate != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Prazo: ${task.dueDate!.day.toString().padLeft(2, '0')}/${task.dueDate!.month.toString().padLeft(2, '0')}/${task.dueDate!.year}',
+            ),
+          ],
+          if (hasDueWarning) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: task.getDueStatus() == DueStatus.overdue
+                    ? Colors.red[100]
+                    : Colors.orange[100],
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: task.getDueStatus() == DueStatus.overdue
+                      ? Colors.red
+                      : Colors.orange,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    task.getDueStatus() == DueStatus.overdue
+                        ? Icons.warning
+                        : Icons.access_time,
+                    color: task.getDueStatus() == DueStatus.overdue
+                        ? Colors.red[700]
+                        : Colors.orange[700],
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      dueStatusMessage,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: task.getDueStatus() == DueStatus.overdue
+                            ? Colors.red[700]
+                            : Colors.orange[700],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
       actions: [

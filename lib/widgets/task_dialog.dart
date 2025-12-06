@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TaskDialog extends StatefulWidget {
-  final Function(String title, String? description, int quadrant) onSave;
+  final Function(String title, String? description, int quadrant, DateTime? dueDate) onSave;
   final int initialQuadrant;
 
   const TaskDialog({Key? key, required this.onSave, this.initialQuadrant = 1})
@@ -15,6 +15,7 @@ class _TaskDialogState extends State<TaskDialog> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   late int _selectedQuadrant;
+  DateTime? _dueDate;
 
   @override
   void initState() {
@@ -50,6 +51,39 @@ class _TaskDialogState extends State<TaskDialog> {
                 labelText: 'Descrição (opcional)',
               ),
               maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.calendar_today),
+              title: Text(
+                _dueDate == null 
+                    ? 'Data Prazo (opcional)' 
+                    : 'Prazo: ${_dueDate!.day.toString().padLeft(2, '0')}/${_dueDate!.month.toString().padLeft(2, '0')}/${_dueDate!.year}',
+              ),
+              trailing: _dueDate != null 
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          _dueDate = null;
+                        });
+                      },
+                    )
+                  : null,
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: _dueDate ?? DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (date != null) {
+                  setState(() {
+                    _dueDate = date;
+                  });
+                }
+              },
             ),
             const SizedBox(height: 20),
             const Text(
@@ -126,6 +160,7 @@ class _TaskDialogState extends State<TaskDialog> {
                     ? null
                     : _descriptionController.text,
                 _selectedQuadrant,
+                _dueDate,
               );
             }
           },

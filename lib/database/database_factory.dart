@@ -8,7 +8,7 @@ class DatabaseFactory {
   static final DatabaseFactory _instance = DatabaseFactory._internal();
   static sqflite.Database? _database;
   static const String _dbName = 'app_produtividade.db';
-  static const int _dbVersion = 2;
+  static const int _dbVersion = 3;
   static bool _ffiInitialized = false;
 
   factory DatabaseFactory() {
@@ -81,6 +81,7 @@ class DatabaseFactory {
         is_completed INTEGER DEFAULT 0,
         priority INTEGER DEFAULT 1,
         quadrant INTEGER DEFAULT 1,
+        due_date TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -102,6 +103,12 @@ class DatabaseFactory {
       // Adiciona coluna quadrant se não existir
       await db.execute(
         "ALTER TABLE tasks ADD COLUMN quadrant INTEGER DEFAULT 1",
+      );
+    }
+    if (oldVersion < 3) {
+      // Adiciona coluna due_date se não existir
+      await db.execute(
+        "ALTER TABLE tasks ADD COLUMN due_date TEXT",
       );
     }
   }
