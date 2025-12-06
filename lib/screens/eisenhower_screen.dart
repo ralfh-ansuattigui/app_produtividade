@@ -139,14 +139,20 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     );
 
     return QuadrantCard(
+      quadrant: quadrant['number'] as int,
       title: quadrant['title'] as String,
       color: quadrant['color'] as Color,
       tasks: quadrantTasks,
       onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
+      onTaskMoved: (task, newQuadrant) => _moveTask(tasksNotifier, task, newQuadrant),
       onAddTask: () =>
           _showAddTaskDialog(context, quadrant: quadrant['number'] as int),
       isCompact: isCompact,
     );
+  }
+
+  void _moveTask(TasksNotifier tasksNotifier, Task task, int newQuadrant) async {
+    await tasksNotifier.moveTask(task.id!, newQuadrant);
   }
 
   void _showAddTaskDialog(BuildContext context, {int quadrant = 1}) {

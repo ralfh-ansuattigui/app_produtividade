@@ -4,11 +4,8 @@ class TaskDialog extends StatefulWidget {
   final Function(String title, String? description, int quadrant) onSave;
   final int initialQuadrant;
 
-  const TaskDialog({
-    Key? key,
-    required this.onSave,
-    this.initialQuadrant = 1,
-  }) : super(key: key);
+  const TaskDialog({Key? key, required this.onSave, this.initialQuadrant = 1})
+    : super(key: key);
 
   @override
   State<TaskDialog> createState() => _TaskDialogState();
