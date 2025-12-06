@@ -66,31 +66,29 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final padding = constraints.maxWidth > 600 ? 16.0 : 8.0;
-        final spacing = constraints.maxWidth > 600 ? 12.0 : 6.0;
+        final spacing = constraints.maxWidth > 600 ? 4.0 : 2.0;
 
-        return Padding(
-          padding: EdgeInsets.all(padding),
-          child: GridView.count(
-            crossAxisCount: 2,
-            mainAxisSpacing: spacing,
-            crossAxisSpacing: spacing,
-            childAspectRatio: 1,
-            children: quadrants.map((q) {
-              final quadrantTasks =
-                  tasksNotifier.getByQuadrant(q['number'] as int);
-              return QuadrantCard(
-                title: q['title'] as String,
-                color: q['color'] as Color,
-                tasks: quadrantTasks,
-                onTaskTap: (task) =>
-                    _showTaskDialog(context, tasksNotifier, task),
-                onAddTask: () =>
-                    _showAddTaskDialog(context, quadrant: q['number'] as int),
-                isCompact: constraints.maxWidth < 500,
-              );
-            }).toList(),
-          ),
+        return GridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: spacing,
+          crossAxisSpacing: spacing,
+          childAspectRatio: 1,
+          padding: EdgeInsets.zero,
+          children: quadrants.map((q) {
+            final quadrantTasks = tasksNotifier.getByQuadrant(
+              q['number'] as int,
+            );
+            return QuadrantCard(
+              title: q['title'] as String,
+              color: q['color'] as Color,
+              tasks: quadrantTasks,
+              onTaskTap: (task) =>
+                  _showTaskDialog(context, tasksNotifier, task),
+              onAddTask: () =>
+                  _showAddTaskDialog(context, quadrant: q['number'] as int),
+              isCompact: constraints.maxWidth < 500,
+            );
+          }).toList(),
         );
       },
     );

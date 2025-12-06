@@ -22,31 +22,37 @@ class QuadrantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleFontSize = isCompact ? 11.0 : 13.0;
-    final emptyMessageSize = isCompact ? 10.0 : 12.0;
-    final taskTileFontSize = isCompact ? 10.0 : 11.0;
-    final buttonIconSize = isCompact ? 14.0 : 16.0;
-    final buttonTextSize = isCompact ? 10.0 : 12.0;
-    const borderRadius = 8.0;
+    final titleFontSize = isCompact ? 10.0 : 12.0;
+    final emptyMessageSize = isCompact ? 9.0 : 11.0;
+    final taskTileFontSize = isCompact ? 9.0 : 10.0;
+    final buttonIconSize = isCompact ? 12.0 : 14.0;
+    final buttonTextSize = isCompact ? 9.0 : 10.0;
+    const borderRadius = 6.0;
 
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+      elevation: 1,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          border: Border(top: BorderSide(color: color, width: 3)),
+          border: Border(top: BorderSide(color: color, width: 2)),
         ),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(isCompact ? 8 : 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 4 : 6,
+                vertical: isCompact ? 4 : 6,
+              ),
               child: Text(
                 title,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: titleFontSize,
-                  height: 1.2,
+                  height: 1.15,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -64,8 +70,8 @@ class QuadrantCard extends StatelessWidget {
                     )
                   : ListView.builder(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isCompact ? 4 : 8,
-                        vertical: isCompact ? 4 : 6,
+                        horizontal: isCompact ? 3 : 4,
+                        vertical: isCompact ? 2 : 3,
                       ),
                       itemCount: tasks.length,
                       itemBuilder: (ctx, idx) => _TaskTile(
@@ -76,9 +82,13 @@ class QuadrantCard extends StatelessWidget {
                     ),
             ),
             Padding(
-              padding: EdgeInsets.all(isCompact ? 6 : 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 3 : 4,
+                vertical: isCompact ? 3 : 4,
+              ),
               child: SizedBox(
                 width: double.infinity,
+                height: isCompact ? 28 : 32,
                 child: ElevatedButton.icon(
                   onPressed: onAddTask,
                   icon: Icon(Icons.add, size: buttonIconSize),
@@ -89,9 +99,7 @@ class QuadrantCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: color.withOpacity(0.2),
                     foregroundColor: color,
-                    padding: EdgeInsets.symmetric(
-                      vertical: isCompact ? 6 : 8,
-                    ),
+                    padding: EdgeInsets.zero,
                   ),
                 ),
               ),
@@ -117,24 +125,21 @@ class _TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 1.5),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(3),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           decoration: BoxDecoration(
             color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(3),
           ),
           child: Text(
             task.title,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: fontSize,
-              height: 1.2,
-            ),
+            style: TextStyle(fontSize: fontSize, height: 1.1),
           ),
         ),
       ),
