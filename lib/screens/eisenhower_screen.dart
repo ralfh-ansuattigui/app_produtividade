@@ -66,31 +66,84 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final spacing = constraints.maxWidth > 600 ? 4.0 : 2.0;
+        final spacing = 2.0;
 
-        return GridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: spacing,
-          crossAxisSpacing: spacing,
-          childAspectRatio: 1,
-          padding: EdgeInsets.zero,
-          children: quadrants.map((q) {
-            final quadrantTasks = tasksNotifier.getByQuadrant(
-              q['number'] as int,
-            );
-            return QuadrantCard(
-              title: q['title'] as String,
-              color: q['color'] as Color,
-              tasks: quadrantTasks,
-              onTaskTap: (task) =>
-                  _showTaskDialog(context, tasksNotifier, task),
-              onAddTask: () =>
-                  _showAddTaskDialog(context, quadrant: q['number'] as int),
-              isCompact: constraints.maxWidth < 500,
-            );
-          }).toList(),
+        return Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildQuadrant(
+                      context,
+                      tasksNotifier,
+                      quadrants[0],
+                      spacing,
+                      constraints.maxWidth < 500,
+                    ),
+                  ),
+                  SizedBox(width: spacing),
+                  Expanded(
+                    child: _buildQuadrant(
+                      context,
+                      tasksNotifier,
+                      quadrants[1],
+                      spacing,
+                      constraints.maxWidth < 500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: spacing),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildQuadrant(
+                      context,
+                      tasksNotifier,
+                      quadrants[2],
+                      spacing,
+                      constraints.maxWidth < 500,
+                    ),
+                  ),
+                  SizedBox(width: spacing),
+                  Expanded(
+                    child: _buildQuadrant(
+                      context,
+                      tasksNotifier,
+                      quadrants[3],
+                      spacing,
+                      constraints.maxWidth < 500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildQuadrant(
+    BuildContext context,
+    TasksNotifier tasksNotifier,
+    Map<String, dynamic> quadrant,
+    double spacing,
+    bool isCompact,
+  ) {
+    final quadrantTasks = tasksNotifier.getByQuadrant(quadrant['number'] as int);
+
+    return QuadrantCard(
+      title: quadrant['title'] as String,
+      color: quadrant['color'] as Color,
+      tasks: quadrantTasks,
+      onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
+      onAddTask: () =>
+          _showAddTaskDialog(context, quadrant: quadrant['number'] as int),
+      isCompact: isCompact,
     );
   }
 

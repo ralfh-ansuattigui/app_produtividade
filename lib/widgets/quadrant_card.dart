@@ -68,16 +68,15 @@ class QuadrantCard extends StatelessWidget {
                         ),
                       ),
                     )
-                  : ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isCompact ? 3 : 4,
-                        vertical: isCompact ? 2 : 3,
-                      ),
-                      itemCount: tasks.length,
-                      itemBuilder: (ctx, idx) => _TaskTile(
-                        task: tasks[idx],
-                        onTap: () => onTaskTap(tasks[idx]),
-                        fontSize: taskTileFontSize,
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: tasks.map((task) {
+                          return _TaskTile(
+                            task: task,
+                            onTap: () => onTaskTap(task),
+                            fontSize: taskTileFontSize,
+                          );
+                        }).toList(),
                       ),
                     ),
             ),
