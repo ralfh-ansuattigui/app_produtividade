@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.app_produtividade"
+    namespace = "com.produtividade.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,8 +20,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.app_produtividade"
+        // Unique Application ID
+        applicationId = "com.produtividade.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -32,8 +32,13 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Assinatura com debug keys (usar chave privada em produção)
+            signingConfig = signingConfigs.getByName("debug")
+            // Ativa minificação para release
+            isMinifyEnabled = true
+            isShrinkResources = true
+        }
+        debug {
             signingConfig = signingConfigs.getByName("debug")
         }
     }

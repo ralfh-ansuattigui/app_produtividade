@@ -1,9 +1,9 @@
 enum DueStatus {
-  ok,           // mais de 2 dias
-  twoDays,      // faltando 2 dias
-  oneDay,       // faltando 1 dia
-  today,        // vencendo hoje
-  overdue       // vencida
+  ok, // mais de 2 dias
+  twoDays, // faltando 2 dias
+  oneDay, // faltando 1 dia
+  today, // vencendo hoje
+  overdue, // vencida
 }
 
 class Task {
@@ -82,7 +82,7 @@ class Task {
       isCompleted: (map['is_completed'] ?? 0) == 1,
       priority: map['priority'] as int? ?? 1,
       quadrant: map['quadrant'] as int? ?? 1,
-      dueDate: map['due_date'] != null 
+      dueDate: map['due_date'] != null
           ? DateTime.tryParse(map['due_date'] as String)
           : null,
       createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
@@ -93,12 +93,12 @@ class Task {
   /// Calcula o status de vencimento da tarefa
   DueStatus getDueStatus() {
     if (dueDate == null || isCompleted) return DueStatus.ok;
-    
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final due = DateTime(dueDate!.year, dueDate!.month, dueDate!.day);
     final difference = due.difference(today).inDays;
-    
+
     if (difference < 0) return DueStatus.overdue;
     if (difference == 0) return DueStatus.today;
     if (difference == 1) return DueStatus.oneDay;

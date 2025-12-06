@@ -236,7 +236,7 @@ class _TaskDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final dueStatusMessage = _getDueStatusMessage();
     final hasDueWarning = task.getDueStatus() != DueStatus.ok;
-    
+
     return AlertDialog(
       title: Text(task.title),
       content: Column(

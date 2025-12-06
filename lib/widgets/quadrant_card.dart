@@ -154,7 +154,7 @@ class _TaskTile extends StatelessWidget {
   String _getDueStatusText() {
     final status = task.getDueStatus();
     if (status == DueStatus.ok) return '';
-    
+
     switch (status) {
       case DueStatus.overdue:
         return '⚠ VENCIDA';
@@ -174,7 +174,7 @@ class _TaskTile extends StatelessWidget {
     final dueStatusColor = _getDueStatusColor();
     final dueStatusText = _getDueStatusText();
     final hasDueWarning = task.getDueStatus() != DueStatus.ok;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1.5),
       child: Draggable<Task>(
@@ -204,8 +204,8 @@ class _TaskTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: dueStatusColor,
               borderRadius: BorderRadius.circular(3),
-              border: hasDueWarning 
-                  ? Border.all(color: dueStatusColor, width: 1) 
+              border: hasDueWarning
+                  ? Border.all(color: dueStatusColor, width: 1)
                   : null,
             ),
             child: Row(
@@ -216,7 +216,7 @@ class _TaskTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: fontSize, 
+                      fontSize: fontSize,
                       height: 1.1,
                       color: hasDueWarning ? Colors.white : Colors.black87,
                     ),
@@ -246,8 +246,8 @@ class _TaskTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: dueStatusColor,
               borderRadius: BorderRadius.circular(3),
-              border: hasDueWarning 
-                  ? Border.all(color: dueStatusColor, width: 1) 
+              border: hasDueWarning
+                  ? Border.all(color: dueStatusColor, width: 1)
                   : null,
             ),
             child: Row(
@@ -258,7 +258,7 @@ class _TaskTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: fontSize, 
+                      fontSize: fontSize,
                       height: 1.1,
                       color: hasDueWarning ? Colors.white : Colors.black87,
                     ),

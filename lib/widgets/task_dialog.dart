@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class TaskDialog extends StatefulWidget {
-  final Function(String title, String? description, int quadrant, DateTime? dueDate) onSave;
+  final Function(
+    String title,
+    String? description,
+    int quadrant,
+    DateTime? dueDate,
+  )
+  onSave;
   final int initialQuadrant;
 
   const TaskDialog({Key? key, required this.onSave, this.initialQuadrant = 1})
@@ -57,11 +63,11 @@ class _TaskDialogState extends State<TaskDialog> {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.calendar_today),
               title: Text(
-                _dueDate == null 
-                    ? 'Data Prazo (opcional)' 
+                _dueDate == null
+                    ? 'Data Prazo (opcional)'
                     : 'Prazo: ${_dueDate!.day.toString().padLeft(2, '0')}/${_dueDate!.month.toString().padLeft(2, '0')}/${_dueDate!.year}',
               ),
-              trailing: _dueDate != null 
+              trailing: _dueDate != null
                   ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {

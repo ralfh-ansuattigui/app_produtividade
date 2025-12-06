@@ -107,9 +107,7 @@ class DatabaseFactory {
     }
     if (oldVersion < 3) {
       // Adiciona coluna due_date se não existir
-      await db.execute(
-        "ALTER TABLE tasks ADD COLUMN due_date TEXT",
-      );
+      await db.execute("ALTER TABLE tasks ADD COLUMN due_date TEXT");
     }
   }
 
