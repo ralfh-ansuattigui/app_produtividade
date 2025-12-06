@@ -46,38 +46,53 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   Widget _buildGrid(BuildContext context, TasksNotifier tasksNotifier) {
     final quadrants = [
-      {'number': 1, 'title': 'Urgente e Importante', 'color': Colors.red},
-      {'number': 2, 'title': 'Não Urgente e Importante', 'color': Colors.green},
+      {'number': 1, 'title': 'Urgente e\nImportante', 'color': Colors.red},
+      {
+        'number': 2,
+        'title': 'Não Urgente e\nImportante',
+        'color': Colors.green,
+      },
       {
         'number': 3,
-        'title': 'Urgente e Não Importante',
+        'title': 'Urgente e Não\nImportante',
         'color': Colors.orange,
       },
       {
         'number': 4,
-        'title': 'Não Urgente e Não Importante',
+        'title': 'Não Urgente e\nNão Importante',
         'color': Colors.blue,
       },
     ];
 
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: GridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        children: quadrants.map((q) {
-          final quadrantTasks = tasksNotifier.getByQuadrant(q['number'] as int);
-          return QuadrantCard(
-            title: q['title'] as String,
-            color: q['color'] as Color,
-            tasks: quadrantTasks,
-            onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
-            onAddTask: () =>
-                _showAddTaskDialog(context, quadrant: q['number'] as int),
-          );
-        }).toList(),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final padding = constraints.maxWidth > 600 ? 16.0 : 8.0;
+        final spacing = constraints.maxWidth > 600 ? 12.0 : 6.0;
+
+        return Padding(
+          padding: EdgeInsets.all(padding),
+          child: GridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: spacing,
+            crossAxisSpacing: spacing,
+            childAspectRatio: 1,
+            children: quadrants.map((q) {
+              final quadrantTasks =
+                  tasksNotifier.getByQuadrant(q['number'] as int);
+              return QuadrantCard(
+                title: q['title'] as String,
+                color: q['color'] as Color,
+                tasks: quadrantTasks,
+                onTaskTap: (task) =>
+                    _showTaskDialog(context, tasksNotifier, task),
+                onAddTask: () =>
+                    _showAddTaskDialog(context, quadrant: q['number'] as int),
+                isCompact: constraints.maxWidth < 500,
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 
