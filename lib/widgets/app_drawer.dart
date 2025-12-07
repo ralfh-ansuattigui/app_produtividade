@@ -132,7 +132,7 @@ class AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Versão 1.0.0',
+              'Versão 1.1.0-dev',
               style: TextStyle(color: Colors.grey[600], fontSize: 12),
               textAlign: TextAlign.center,
             ),
