@@ -6,6 +6,7 @@ import 'screens/splash.dart';
 import 'screens/auth_screen.dart';
 import 'database/database_initializer.dart';
 import 'providers/tasks_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,9 +26,10 @@ class MyApp extends StatelessWidget {
       providers: [ChangeNotifierProvider(create: (_) => TasksNotifier())],
       child: MaterialApp(
         title: 'App Produtividade',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.light,
+        debugShowCheckedModeBanner: false,
         // 🚀 Inicializa com SplashScreen
         home: const SplashScreen(),
         routes: {

@@ -5,6 +5,9 @@ import '../models/task.dart';
 import '../providers/tasks_provider.dart';
 import '../widgets/quadrant_card.dart';
 import '../widgets/task_dialog.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/app_drawer.dart';
+import '../utils/quadrant_helper.dart';
 
 class EisenhowerScreen extends StatefulWidget {
   const EisenhowerScreen({Key? key}) : super(key: key);
@@ -25,7 +28,17 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Matriz de Eisenhower'), elevation: 0),
+      appBar: CustomAppBar(
+        title: 'Matriz de Eisenhower',
+        showBackButton: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => _showMatrixInfo(context),
+            tooltip: 'Sobre a Matriz',
+          ),
+        ],
+      ),
       body: Consumer<TasksNotifier>(
         builder: (context, tasksNotifier, _) {
           if (tasksNotifier.isLoading) {
@@ -37,91 +50,293 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           return _buildGrid(context, tasksNotifier);
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddTaskDialog(context),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Nova Tarefa'),
       ),
+    );
+  }
+
+  void _showMatrixInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Matriz de Eisenhower'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'A Matriz de Eisenhower ajuda a priorizar tarefas baseado em:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              _buildInfoItem(
+                context,
+                color: Colors.red,
+                title: 'Quadrante 1: Urgente e Importante',
+                description: 'Crises e emergências. Faça imediatamente!',
+              ),
+              const SizedBox(height: 12),
+              _buildInfoItem(
+                context,
+                color: Colors.green,
+                title: 'Quadrante 2: Não Urgente e Importante',
+                description: 'Planejamento e desenvolvimento. Agende!',
+              ),
+              const SizedBox(height: 12),
+              _buildInfoItem(
+                context,
+                color: Colors.orange,
+                title: 'Quadrante 3: Urgente e Não Importante',
+                description: 'Interrupções e distrações. Delegue!',
+              ),
+              const SizedBox(height: 12),
+              _buildInfoItem(
+                context,
+                color: Colors.blue,
+                title: 'Quadrante 4: Não Urgente e Não Importante',
+                description: 'Atividades triviais. Elimine!',
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendi'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(
+    BuildContext context, {
+    required Color color,
+    required String title,
+    required String description,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          margin: const EdgeInsets.only(top: 4),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildGrid(BuildContext context, TasksNotifier tasksNotifier) {
     final quadrants = [
-      {'number': 1, 'title': 'Urgente e\nImportante', 'color': Colors.red},
-      {
-        'number': 2,
-        'title': 'Não Urgente e\nImportante',
-        'color': Colors.green,
-      },
-      {
-        'number': 3,
-        'title': 'Urgente e Não\nImportante',
-        'color': Colors.orange,
-      },
-      {
-        'number': 4,
-        'title': 'Não Urgente e\nNão Importante',
-        'color': Colors.blue,
-      },
+      {'number': 1, 'title': '', 'color': Colors.red},
+      {'number': 2, 'title': '', 'color': Colors.green},
+      {'number': 3, 'title': '', 'color': Colors.orange},
+      {'number': 4, 'title': '', 'color': Colors.blue},
     ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final spacing = 2.0;
+        final labelWidth = 50.0;
+        final labelHeight = 28.0;
 
-        return Column(
-          children: [
-            Expanded(
-              child: Row(
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              // Labels Horizontais (IMPORTANTE | NÃO IMPORTANTE)
+              Row(
                 children: [
+                  SizedBox(width: labelWidth),
                   Expanded(
-                    child: _buildQuadrant(
-                      context,
-                      tasksNotifier,
-                      quadrants[0],
-                      spacing,
-                      constraints.maxWidth < 500,
+                    child: Container(
+                      height: labelHeight,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.8),
+                            Theme.of(
+                              context,
+                            ).colorScheme.secondary.withOpacity(0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'IMPORTANTE',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: spacing),
                   Expanded(
-                    child: _buildQuadrant(
-                      context,
-                      tasksNotifier,
-                      quadrants[1],
-                      spacing,
-                      constraints.maxWidth < 500,
+                    child: Container(
+                      height: labelHeight,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'NÃO IMPORTANTE',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          color: Colors.grey[800],
+                          letterSpacing: 0.3,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: spacing),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildQuadrant(
-                      context,
-                      tasksNotifier,
-                      quadrants[2],
-                      spacing,
-                      constraints.maxWidth < 500,
+              const SizedBox(height: 8),
+              // Grid com Labels Verticais
+              Expanded(
+                child: Row(
+                  children: [
+                    // Coluna de Labels Verticais (URGENTE | NÃO URGENTE)
+                    Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: labelWidth,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.red[600]!, Colors.orange[600]!],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: RotatedBox(
+                              quarterTurns: 3,
+                              child: const Text(
+                                'URGENTE',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: spacing),
+                        Expanded(
+                          child: Container(
+                            width: labelWidth,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: RotatedBox(
+                              quarterTurns: 3,
+                              child: Text(
+                                'NÃO URGENTE',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  color: Colors.grey[800],
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: spacing),
-                  Expanded(
-                    child: _buildQuadrant(
-                      context,
-                      tasksNotifier,
-                      quadrants[3],
-                      spacing,
-                      constraints.maxWidth < 500,
+                    const SizedBox(width: 8),
+                    // Grid de Quadrantes
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _buildQuadrant(
+                                    context,
+                                    tasksNotifier,
+                                    quadrants[0],
+                                    spacing,
+                                  ),
+                                ),
+                                SizedBox(width: spacing),
+                                Expanded(
+                                  child: _buildQuadrant(
+                                    context,
+                                    tasksNotifier,
+                                    quadrants[2],
+                                    spacing,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: spacing),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _buildQuadrant(
+                                    context,
+                                    tasksNotifier,
+                                    quadrants[1],
+                                    spacing,
+                                  ),
+                                ),
+                                SizedBox(width: spacing),
+                                Expanded(
+                                  child: _buildQuadrant(
+                                    context,
+                                    tasksNotifier,
+                                    quadrants[3],
+                                    spacing,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -132,7 +347,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     TasksNotifier tasksNotifier,
     Map<String, dynamic> quadrant,
     double spacing,
-    bool isCompact,
   ) {
     final quadrantTasks = tasksNotifier.getByQuadrant(
       quadrant['number'] as int,
@@ -145,19 +359,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       tasks: quadrantTasks,
       onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
       onTaskMoved: (task, newQuadrant) =>
-          _moveTask(tasksNotifier, task, newQuadrant),
+          tasksNotifier.moveTask(task.id!, newQuadrant),
       onAddTask: () =>
           _showAddTaskDialog(context, quadrant: quadrant['number'] as int),
-      isCompact: isCompact,
     );
-  }
-
-  void _moveTask(
-    TasksNotifier tasksNotifier,
-    Task task,
-    int newQuadrant,
-  ) async {
-    await tasksNotifier.moveTask(task.id!, newQuadrant);
   }
 
   void _showAddTaskDialog(BuildContext context, {int quadrant = 1}) {
@@ -201,21 +406,6 @@ class _TaskDetailDialog extends StatelessWidget {
 
   const _TaskDetailDialog({required this.task, required this.tasksNotifier});
 
-  String _getQuadrantName(int quadrant) {
-    switch (quadrant) {
-      case 1:
-        return 'Urgente e Importante';
-      case 2:
-        return 'Não Urgente e Importante';
-      case 3:
-        return 'Urgente e Não Importante';
-      case 4:
-        return 'Não Urgente e Não Importante';
-      default:
-        return 'Desconhecido';
-    }
-  }
-
   String _getDueStatusMessage() {
     final status = task.getDueStatus();
     switch (status) {
@@ -248,7 +438,7 @@ class _TaskDetailDialog extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(task.description!),
             ),
-          Text('Quadrante: ${_getQuadrantName(task.quadrant)}'),
+          Text('Quadrante: ${QuadrantHelper.getName(task.quadrant)}'),
           if (task.dueDate != null) ...[
             const SizedBox(height: 8),
             Text(

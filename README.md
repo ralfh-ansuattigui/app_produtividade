@@ -1,19 +1,30 @@
-# App Produtividade 📊
+# App Produtividade 📊 v1.0.0
 
-Um aplicativo Flutter multiplataforma que implementa a **Matriz de Eisenhower** para gerenciamento de produtividade pessoal com suporte para Android, iOS, Web, Windows, macOS e Linux.
+Um aplicativo Flutter multiplataforma que implementa a **Matriz de Eisenhower**
+para gerenciamento de produtividade pessoal com suporte para Android, iOS, Web,
+Windows, macOS e Linux.
 
 ## Visão Geral
 
-App Produtividade ajuda você a organizar tarefas em 4 quadrantes baseado na urgência e importância:
+App Produtividade ajuda você a organizar tarefas em 4 quadrantes baseado na
+urgência e importância:
 
-1. **Urgente & Importante** - Fazer Agora
-2. **Não Urgente & Importante** - Agendar
-3. **Urgente & Não Importante** - Delegar
-4. **Não Urgente & Não Importante** - Eliminar
+1. **Urgente & Importante** 🔥 - Fazer Agora (Vermelho)
+2. **Não Urgente & Importante** 📅 - Agendar (Verde)
+3. **Urgente & Não Importante** 👥 - Delegar (Laranja)
+4. **Não Urgente & Não Importante** 🗑️ - Eliminar (Azul)
 
-### Recursos Principais
+### Recursos Principais v1.0.0
 
-- ✅ **Matriz de Eisenhower** com 4 quadrantes responsivos
+- ✅ **CustomAppBar** com logo gradiente e navegação consistente
+- ✅ **AppDrawer** com menu de ferramentas e badges de status
+- ✅ **HomeScreen** moderna com banner de boas-vindas e grid de ferramentas
+- ✅ **Matriz de Eisenhower** otimizada:
+  - Labels compactas nas bordas (50x28px) maximizando área útil
+  - Duplo clique em área vazia para adicionar tarefas rapidamente
+  - Seleção intuitiva com SegmentedButton (Urgente/Não Urgente, Importante/Não
+    Importante)
+  - Indicador visual colorido do quadrante selecionado
 - ✅ **Drag & Drop** para mover tarefas entre quadrantes
 - ✅ **Data de Prazo** com avisos visuais:
   - 🔴 **VENCIDA** (vermelho) - Tarefas atrasadas
@@ -22,7 +33,8 @@ App Produtividade ajuda você a organizar tarefas em 4 quadrantes baseado na urg
   - 📅 **2 dias** (amarelo) - Vence em 2 dias
 - ✅ **Marcar Completo** e **Deletar** tarefas
 - ✅ **Banco de Dados Local** (SQLite)
-- ✅ **UI Responsiva** adaptável a diferentes tamanhos de tela
+- ✅ **Material Design 3** com tema consistente
+- ✅ **Código otimizado** sem complexidades desnecessárias
 
 ## Arquitetura
 
@@ -105,7 +117,8 @@ flutter build appbundle --release
 
 **Arquivo gerado**: `build/app/outputs/flutter-apk/app-debug.apk`
 
-Ver [ANDROID_BUILD_GUIDE.md](./ANDROID_BUILD_GUIDE.md) para instruções detalhadas.
+Ver [ANDROID_BUILD_GUIDE.md](./ANDROID_BUILD_GUIDE.md) para instruções
+detalhadas.
 
 ### iOS
 
@@ -140,6 +153,7 @@ flutter build linux --release
 ## Estrutura do Banco de Dados
 
 ### Tabela: users
+
 ```sql
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -152,6 +166,7 @@ CREATE TABLE users (
 ```
 
 ### Tabela: tasks (v3)
+
 ```sql
 CREATE TABLE tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -196,13 +211,35 @@ CREATE TABLE tasks (
 
 ## Roadmap
 
-- [ ] Autenticação de usuários (BCrypt + Backend)
-- [ ] Sincronização com servidor (Firebase/Custom API)
-- [ ] Notificações de lembrete
-- [ ] Matriz de Pareto (80/20)
-- [ ] Matriz GUT (Gravity-Urgency-Tendency)
-- [ ] Exportar tarefas (PDF/CSV)
+### v1.1.0 (Próximo)
+
+- [ ] Implementar Análise de Pareto (80/20)
+- [ ] Implementar Matriz GUT (Gravidade, Urgência, Tendência)
+- [ ] Adicionar Calendário de tarefas com visualização de prazos
+- [ ] **Aba de Estatísticas no Eisenhower**:
+  - Migrar widget de estatísticas da HomeScreen para EisenhowerScreen
+  - TabBar com 2 abas: **Matriz** | **Estatísticas**
+  - Dashboard dinâmico com dados reais do banco:
+    - Total de tarefas por quadrante
+    - % de conclusão por quadrante
+    - Tarefas vencidas/hoje/próximos dias
+    - Gráficos de distribuição
+
+### v1.2.0
+
+- [ ] Sistema de notificações de lembrete
+- [ ] Backup e restauração de dados
 - [ ] Tema escuro
+- [ ] Gráficos de desempenho
+- [ ] Exportar tarefas (PDF/CSV)
+
+### v2.0.0
+
+- [ ] Autenticação de usuários (BCrypt + Backend)
+- [ ] Sincronização em nuvem (Firebase/Custom API)
+- [ ] Compartilhamento de tarefas
+- [ ] Sistema de projetos/categorias
+- [ ] Widget para tela inicial do Android
 - [ ] Múltiplos idiomas
 
 ## Desenvolvimento
@@ -251,7 +288,8 @@ adb start-server
 
 ### Erro de permissão no Windows
 
-Alguns erros de permissão ao deletar diretórios no Windows podem ser ignorados - não afetam o build final.
+Alguns erros de permissão ao deletar diretórios no Windows podem ser ignorados -
+não afetam o build final.
 
 ## Contribuindo
 
@@ -267,8 +305,8 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para detalhes.
 
 ## Contato
 
-📧 Email: ralfh@example.com
-🐙 GitHub: [@ralfh-ansuattigui](https://github.com/ralfh-ansuattigui)
+📧 Email: ralfh@example.com 🐙 GitHub:
+[@ralfh-ansuattigui](https://github.com/ralfh-ansuattigui)
 
 ## Referências
 
@@ -276,4 +314,3 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para detalhes.
 - [Eisenhower Matrix](https://en.wikipedia.org/wiki/Time_management#Eisenhower_matrix)
 - [Android Build Guide](./ANDROID_BUILD_GUIDE.md)
 - [Provider Package](https://pub.dev/packages/provider)
-

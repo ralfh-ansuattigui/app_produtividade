@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/quadrant_helper.dart';
 
 class TaskDialog extends StatefulWidget {
   final Function(
@@ -23,10 +24,49 @@ class _TaskDialogState extends State<TaskDialog> {
   late int _selectedQuadrant;
   DateTime? _dueDate;
 
+  // Novas variáveis para urgência e importância
+  bool _isUrgent = true;
+  bool _isImportant = true;
+
   @override
   void initState() {
     super.initState();
     _selectedQuadrant = widget.initialQuadrant;
+    // Inicializa urgência e importância baseado no quadrante
+    _updateUrgencyImportance();
+  }
+
+  void _updateUrgencyImportance() {
+    switch (_selectedQuadrant) {
+      case 1: // Urgente e Importante
+        _isUrgent = true;
+        _isImportant = true;
+        break;
+      case 2: // Não Urgente e Importante
+        _isUrgent = false;
+        _isImportant = true;
+        break;
+      case 3: // Urgente e Não Importante
+        _isUrgent = true;
+        _isImportant = false;
+        break;
+      case 4: // Não Urgente e Não Importante
+        _isUrgent = false;
+        _isImportant = false;
+        break;
+    }
+  }
+
+  void _updateQuadrant() {
+    if (_isUrgent && _isImportant) {
+      _selectedQuadrant = 1;
+    } else if (!_isUrgent && _isImportant) {
+      _selectedQuadrant = 2;
+    } else if (_isUrgent && !_isImportant) {
+      _selectedQuadrant = 3;
+    } else {
+      _selectedQuadrant = 4;
+    }
   }
 
   @override
@@ -92,62 +132,148 @@ class _TaskDialogState extends State<TaskDialog> {
               },
             ),
             const SizedBox(height: 20),
+
+            // Seleção de Urgência
             const Text(
-              'Quadrante:',
+              'Urgência:',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            RadioListTile<int>(
-              title: const Text('Urgente e Importante'),
-              subtitle: const Text('Fazer agora'),
-              value: 1,
-              groupValue: _selectedQuadrant,
-              onChanged: (value) {
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment<bool>(
+                  value: true,
+                  label: Text('Urgente'),
+                  icon: Icon(Icons.warning_amber_rounded),
+                ),
+                ButtonSegment<bool>(
+                  value: false,
+                  label: Text('Não Urgente'),
+                  icon: Icon(Icons.schedule),
+                ),
+              ],
+              selected: {_isUrgent},
+              onSelectionChanged: (Set<bool> selected) {
                 setState(() {
-                  _selectedQuadrant = value!;
+                  _isUrgent = selected.first;
+                  _updateQuadrant();
                 });
               },
-              dense: true,
-              contentPadding: EdgeInsets.zero,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return _isUrgent ? Colors.red[100]! : Colors.blue[100]!;
+                  }
+                  return Colors.grey[200]!;
+                }),
+                foregroundColor: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return _isUrgent ? Colors.red[900]! : Colors.blue[900]!;
+                  }
+                  return Colors.grey[700]!;
+                }),
+              ),
             ),
-            RadioListTile<int>(
-              title: const Text('Não Urgente e Importante'),
-              subtitle: const Text('Agendar'),
-              value: 2,
-              groupValue: _selectedQuadrant,
-              onChanged: (value) {
-                setState(() {
-                  _selectedQuadrant = value!;
-                });
-              },
-              dense: true,
-              contentPadding: EdgeInsets.zero,
+
+            const SizedBox(height: 20),
+
+            // Seleção de Importância
+            const Text(
+              'Importância:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            RadioListTile<int>(
-              title: const Text('Urgente e Não Importante'),
-              subtitle: const Text('Delegar'),
-              value: 3,
-              groupValue: _selectedQuadrant,
-              onChanged: (value) {
+            const SizedBox(height: 8),
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment<bool>(
+                  value: true,
+                  label: Text('Importante'),
+                  icon: Icon(Icons.star),
+                ),
+                ButtonSegment<bool>(
+                  value: false,
+                  label: Text('Não Importante'),
+                  icon: Icon(Icons.star_border),
+                ),
+              ],
+              selected: {_isImportant},
+              onSelectionChanged: (Set<bool> selected) {
                 setState(() {
-                  _selectedQuadrant = value!;
+                  _isImportant = selected.first;
+                  _updateQuadrant();
                 });
               },
-              dense: true,
-              contentPadding: EdgeInsets.zero,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return _isImportant
+                        ? Colors.green[100]!
+                        : Colors.grey[300]!;
+                  }
+                  return Colors.grey[200]!;
+                }),
+                foregroundColor: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return _isImportant
+                        ? Colors.green[900]!
+                        : Colors.grey[700]!;
+                  }
+                  return Colors.grey[700]!;
+                }),
+              ),
             ),
-            RadioListTile<int>(
-              title: const Text('Não Urgente e Não Importante'),
-              subtitle: const Text('Eliminar'),
-              value: 4,
-              groupValue: _selectedQuadrant,
-              onChanged: (value) {
-                setState(() {
-                  _selectedQuadrant = value!;
-                });
-              },
-              dense: true,
-              contentPadding: EdgeInsets.zero,
+
+            const SizedBox(height: 16),
+
+            // Indicador Visual do Quadrante Selecionado
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: _getQuadrantColor().withOpacity(0.1),
+                border: Border.all(color: _getQuadrantColor(), width: 2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _getQuadrantIcon(),
+                    color: _getQuadrantColor(),
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _getQuadrantName(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: _getQuadrantColor(),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _getQuadrantAction(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -175,4 +301,11 @@ class _TaskDialogState extends State<TaskDialog> {
       ],
     );
   }
+
+  // Métodos auxiliares para o indicador visual
+  Color _getQuadrantColor() => QuadrantHelper.getColor(_selectedQuadrant);
+  IconData _getQuadrantIcon() => QuadrantHelper.getIcon(_selectedQuadrant);
+  String _getQuadrantName() =>
+      'Quadrante $_selectedQuadrant: ${QuadrantHelper.getName(_selectedQuadrant)}';
+  String _getQuadrantAction() => QuadrantHelper.getAction(_selectedQuadrant);
 }

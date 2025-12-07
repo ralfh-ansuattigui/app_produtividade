@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/task.dart';
 
-class QuadrantCard extends StatelessWidget {
+class QuadrantCard extends StatefulWidget {
   final int quadrant;
   final String title;
   final Color color;
@@ -10,7 +10,6 @@ class QuadrantCard extends StatelessWidget {
   final Function(Task) onTaskTap;
   final Function(Task, int) onTaskMoved;
   final VoidCallback onAddTask;
-  final bool isCompact;
 
   const QuadrantCard({
     Key? key,
@@ -21,22 +20,43 @@ class QuadrantCard extends StatelessWidget {
     required this.onTaskTap,
     required this.onTaskMoved,
     required this.onAddTask,
-    this.isCompact = false,
   }) : super(key: key);
 
   @override
+  State<QuadrantCard> createState() => _QuadrantCardState();
+}
+
+class _QuadrantCardState extends State<QuadrantCard> {
+  int _tapCount = 0;
+  DateTime? _lastTapTime;
+
+  void _handleTap() {
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!).inMilliseconds < 500) {
+      // Duplo clique detectado
+      _tapCount = 0;
+      _lastTapTime = null;
+      widget.onAddTask();
+    } else {
+      // Primeiro clique
+      _tapCount = 1;
+      _lastTapTime = now;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final titleFontSize = isCompact ? 10.0 : 12.0;
-    final emptyMessageSize = isCompact ? 9.0 : 11.0;
-    final taskTileFontSize = isCompact ? 9.0 : 10.0;
-    final buttonIconSize = isCompact ? 12.0 : 14.0;
-    final buttonTextSize = isCompact ? 9.0 : 10.0;
+    const titleFontSize = 12.0;
+    const emptyMessageSize = 11.0;
+    const taskTileFontSize = 10.0;
     const borderRadius = 6.0;
 
     return DragTarget<Task>(
-      onWillAcceptWithDetails: (details) => details.data.quadrant != quadrant,
+      onWillAcceptWithDetails: (details) =>
+          details.data.quadrant != widget.quadrant,
       onAcceptWithDetails: (details) {
-        onTaskMoved(details.data, quadrant);
+        widget.onTaskMoved(details.data, widget.quadrant);
       },
       builder: (context, candidateData, rejectedData) {
         final isDraggingOver = candidateData.isNotEmpty;
@@ -49,70 +69,63 @@ class QuadrantCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border(top: BorderSide(color: color, width: 2)),
-              color: isDraggingOver ? color.withOpacity(0.1) : null,
+              border: Border(top: BorderSide(color: widget.color, width: 2)),
+              color: isDraggingOver ? widget.color.withOpacity(0.1) : null,
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isCompact ? 4 : 6,
-                    vertical: isCompact ? 4 : 6,
-                  ),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleFontSize,
-                      height: 1.15,
+                if (widget.title.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
                     ),
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      widget.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: titleFontSize,
+                        height: 1.15,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
                 Expanded(
-                  child: tasks.isEmpty
-                      ? Center(
-                          child: Text(
-                            'Sem tarefas',
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: emptyMessageSize,
+                  child: GestureDetector(
+                    onTap: widget.tasks.isEmpty ? _handleTap : null,
+                    child: widget.tasks.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.touch_app,
+                                  color: Colors.grey[300],
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Duplo clique para\nadicionar tarefa',
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: emptyMessageSize,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
+                              children: widget.tasks.map((task) {
+                                return _TaskTile(
+                                  task: task,
+                                  onTap: () => widget.onTaskTap(task),
+                                  fontSize: taskTileFontSize,
+                                );
+                              }).toList(),
                             ),
                           ),
-                        )
-                      : SingleChildScrollView(
-                          child: Column(
-                            children: tasks.map((task) {
-                              return _TaskTile(
-                                task: task,
-                                onTap: () => onTaskTap(task),
-                                fontSize: taskTileFontSize,
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isCompact ? 3 : 4,
-                    vertical: isCompact ? 3 : 4,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: isCompact ? 28 : 32,
-                    child: ElevatedButton.icon(
-                      onPressed: onAddTask,
-                      icon: Icon(Icons.add, size: buttonIconSize),
-                      label: Text(
-                        'Adicionar',
-                        style: TextStyle(fontSize: buttonTextSize),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color.withOpacity(0.2),
-                        foregroundColor: color,
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
                   ),
                 ),
               ],
