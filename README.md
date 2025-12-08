@@ -211,7 +211,7 @@ CREATE TABLE tasks (
 
 ## Roadmap
 
-### v1.1.0 (Próximo)
+### v1.2.0 (Próximo)
 
 - [ ] Implementar Análise de Pareto (80/20)
 - [ ] Implementar Matriz GUT (Gravidade, Urgência, Tendência)
@@ -225,7 +225,7 @@ CREATE TABLE tasks (
     - Tarefas vencidas/hoje/próximos dias
     - Gráficos de distribuição
 
-### v1.2.0
+### v1.3.0
 
 - [ ] Sistema de notificações de lembrete
 - [ ] Backup e restauração de dados

@@ -32,13 +32,13 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // TODO v1.1.0: Mover widget de estatísticas para EisenhowerScreen
+              // TODO v1.2.0: Mover widget de estatísticas para EisenhowerScreen
               // Implementar como aba (TabBar) para otimizar espaço:
               // - Aba 1: Matriz (grid atual)
               // - Aba 2: Estatísticas (total, concluídas, pendentes por quadrante)
               // Usar Consumer<TasksNotifier> para valores dinâmicos
 
-              // Seção de Estatísticas (placeholder - será movida v1.1.0)
+              // Seção de Estatísticas (placeholder - será movida v1.2.0)
               Text(
                 'Resumo das Tarefas',
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -55,16 +55,9 @@ class HomeScreen extends StatelessWidget {
   Widget _buildWelcomeBanner(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.secondary,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.grey[700],
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -75,44 +68,25 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.emoji_events,
-                  color: Colors.white,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bem-vindo!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Organize suas tarefas com eficiência',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          const Text(
+            'Bem-vindo!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 19.2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 3.2),
+          Text(
+            'Organize suas tarefas com eficiência',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 11.2,
+            ),
           ),
         ],
       ),

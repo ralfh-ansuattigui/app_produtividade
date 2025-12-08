@@ -47,7 +47,12 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.check_circle, size: 80, color: Colors.blue),
+              Image.asset(
+                'assets/images/logo.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
               const SizedBox(height: 20),
               const Text(
                 'Produtividade',

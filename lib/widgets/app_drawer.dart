@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/about_app_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -41,10 +42,14 @@ class AppDrawer extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.check_circle_outline,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 40,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -115,13 +120,16 @@ class AppDrawer extends StatelessWidget {
                   isSelected: currentRoute == '/settings',
                   enabled: false,
                 ),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.help_outline,
-                  title: 'Ajuda',
-                  route: '/help',
-                  isSelected: currentRoute == '/help',
-                  enabled: false,
+                ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: const Text('Sobre o App'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AboutAppScreen(),
+                    );
+                  },
                 ),
               ],
             ),
@@ -132,7 +140,7 @@ class AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Versão 1.1.0-dev',
+              'Versão 1.2.0-dev',
               style: TextStyle(color: Colors.grey[600], fontSize: 12),
               textAlign: TextAlign.center,
             ),

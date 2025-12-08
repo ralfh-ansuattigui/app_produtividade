@@ -82,6 +82,43 @@ class TasksNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> reorderTasksInQuadrant(
+    int quadrant,
+    int fromIndex,
+    int toIndex,
+  ) async {
+    try {
+      // Obter tarefas do quadrante
+      final quadrantTasks = _tasks
+          .where((t) => t.quadrant == quadrant)
+          .toList();
+
+      if (fromIndex >= 0 &&
+          fromIndex < quadrantTasks.length &&
+          toIndex >= 0 &&
+          toIndex < quadrantTasks.length) {
+        // Fazer a reordenação localmente
+        final task = quadrantTasks.removeAt(fromIndex);
+        quadrantTasks.insert(toIndex, task);
+
+        // Atualizar a lista inteira mantendo os índices
+        for (int i = 0; i < quadrantTasks.length; i++) {
+          final taskIndex = _tasks.indexWhere(
+            (t) => t.id == quadrantTasks[i].id,
+          );
+          if (taskIndex >= 0) {
+            _tasks[taskIndex] = quadrantTasks[i];
+          }
+        }
+
+        notifyListeners();
+      }
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
   Future<void> toggleComplete(int id, bool isCompleted) async {
     try {
       await _repository.toggleComplete(id, isCompleted);

@@ -28,17 +28,18 @@ class AppTheme {
     ),
 
     // AppBar Theme
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       centerTitle: false,
       elevation: 2,
-      backgroundColor: primaryColor,
-      foregroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(
-        color: Colors.white,
+      backgroundColor: Colors.grey[200],
+      foregroundColor: Colors.black87,
+      iconTheme: const IconThemeData(color: Colors.black87),
+      titleTextStyle: const TextStyle(
+        color: Colors.black87,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
+      shadowColor: Colors.black.withOpacity(0.1),
     ),
 
     // Card Theme

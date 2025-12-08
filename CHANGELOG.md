@@ -1,5 +1,31 @@
 # Changelog - App Produtividade
 
+## [1.1.0] - 2025-12-07
+
+### ✨ Destaques
+
+**Matriz de Eisenhower**
+
+- Reordenação de tarefas dentro do quadrante (ReorderableListView)
+- Drag & drop entre quadrantes com detecção consistente de toque
+- Botão de lupa em cada quadrante para abrir visão ampliada (modal) com
+  descrição e prazo
+- Inclusão rápida por duplo clique mesmo com tarefas já existentes
+
+**Interface e Informações**
+
+- Novo splash/home com logo atualizado
+- Abas de informação sobre a Matriz (Orientação Rápida e Sobre)
+- Popup "Sobre o App" com desenvolvedor, versão e roadmap
+- Numeração de tarefas e fontes maiores para melhor leitura
+
+**Estrutura**
+
+- Introdução de `EisenhowerInfoScreen` e `AboutAppScreen`
+- Ajustes no `AppDrawer` e `CustomAppBar` para integração dos novos fluxos
+
+---
+
 ## [1.0.0] - 2024-12-07
 
 ### 🎉 Release Inicial
@@ -77,7 +103,7 @@
 
 ### 🎯 Próximas Versões Planejadas
 
-**v1.1.0** (Em Planejamento)
+**v1.2.0** (Próximo)
 
 - Implementação da Análise de Pareto
 - Implementação da Matriz GUT
@@ -92,7 +118,7 @@
     - Gráficos de distribuição por quadrante
   - Otimização de espaço na tela principal
 
-**v1.2.0**
+**v1.3.0**
 
 - Sistema de notificações para prazos
 - Backup e restauração de dados

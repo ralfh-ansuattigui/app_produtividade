@@ -8,6 +8,7 @@ import '../widgets/task_dialog.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../utils/quadrant_helper.dart';
+import 'eisenhower_info_screen.dart';
 
 class EisenhowerScreen extends StatefulWidget {
   const EisenhowerScreen({Key? key}) : super(key: key);
@@ -34,7 +35,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed: () => _showMatrixInfo(context),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const EisenhowerInfoScreen(),
+              ),
+            ),
             tooltip: 'Sobre a Matriz',
           ),
         ],
@@ -360,6 +365,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       onTaskTap: (task) => _showTaskDialog(context, tasksNotifier, task),
       onTaskMoved: (task, newQuadrant) =>
           tasksNotifier.moveTask(task.id!, newQuadrant),
+      onTaskReordered: (fromIndex, toIndex) {
+        tasksNotifier.reorderTasksInQuadrant(
+          quadrant['number'] as int,
+          fromIndex,
+          toIndex,
+        );
+      },
       onAddTask: () =>
           _showAddTaskDialog(context, quadrant: quadrant['number'] as int),
     );
