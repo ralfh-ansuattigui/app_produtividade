@@ -1,0 +1,679 @@
+import 'package:flutter/material.dart';
+
+import '../models/task.dart';
+
+class QuadrantCard extends StatefulWidget {
+  final int quadrant;
+  final String title;
+  final Color color;
+  final List<Task> tasks;
+  final Function(Task) onTaskTap;
+  final Function(Task, int) onTaskMoved;
+  final Function(int, int)?
+  onTaskReordered; // Para reordenação dentro do quadrante
+  final VoidCallback onAddTask;
+
+  const QuadrantCard({
+    Key? key,
+    required this.quadrant,
+    required this.title,
+    required this.color,
+    required this.tasks,
+    required this.onTaskTap,
+    required this.onTaskMoved,
+    this.onTaskReordered,
+    required this.onAddTask,
+  }) : super(key: key);
+
+  @override
+  State<QuadrantCard> createState() => _QuadrantCardState();
+}
+
+class _QuadrantCardState extends State<QuadrantCard> {
+  int _tapCount = 0;
+  DateTime? _lastTapTime;
+
+  void _handleTap() {
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!).inMilliseconds < 500) {
+      // Duplo clique detectado
+      _tapCount = 0;
+      _lastTapTime = null;
+      widget.onAddTask();
+    } else {
+      // Primeiro clique
+      _tapCount = 1;
+      _lastTapTime = now;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const titleFontSize = 12.0;
+    const emptyMessageSize = 11.0;
+    const taskTileFontSize = 12.0;
+    const borderRadius = 6.0;
+
+    return DragTarget<Task>(
+      onWillAcceptWithDetails: (details) =>
+          true, // Aceita tanto de outros quadrantes quanto deste
+      onAcceptWithDetails: (details) {
+        if (details.data.quadrant != widget.quadrant) {
+          // Tarefa de outro quadrante
+          widget.onTaskMoved(details.data, widget.quadrant);
+        } else {
+          // Tarefa do mesmo quadrante - aqui seria para reordenação
+          // Por enquanto não faz nada, mas o callback onTaskReordered pode ser usado
+          widget.onTaskReordered?.call(widget.tasks.indexOf(details.data), -1);
+        }
+      },
+      builder: (context, candidateData, rejectedData) {
+        final isDraggingOver = candidateData.isNotEmpty;
+        return Card(
+          elevation: 1,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(borderRadius),
+              border: Border(top: BorderSide(color: widget.color, width: 2)),
+              color: isDraggingOver ? widget.color.withOpacity(0.1) : null,
+            ),
+            child: Column(
+              children: [
+                if (widget.title.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      widget.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: titleFontSize,
+                        height: 1.15,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: widget.tasks.isEmpty ? _handleTap : null,
+                    child: widget.tasks.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.touch_app,
+                                  color: Colors.grey[300],
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Duplo clique para\nadicionar tarefa',
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: emptyMessageSize,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
+                              children: List.generate(
+                                widget.tasks.length,
+                                (index) => _ReorderableTaskTile(
+                                  task: widget.tasks[index],
+                                  taskNumber: index + 1,
+                                  taskIndex: index,
+                                  totalTasks: widget.tasks.length,
+                                  onTap: () =>
+                                      widget.onTaskTap(widget.tasks[index]),
+                                  onReorder: (fromIndex, toIndex) {
+                                    widget.onTaskReordered?.call(
+                                      fromIndex,
+                                      toIndex,
+                                    );
+                                  },
+                                  fontSize: taskTileFontSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ReorderableTaskTile extends StatefulWidget {
+  final Task task;
+  final int taskNumber;
+  final int taskIndex;
+  final int totalTasks;
+  final VoidCallback onTap;
+  final Function(int, int) onReorder;
+  final double fontSize;
+
+  const _ReorderableTaskTile({
+    required this.task,
+    required this.taskNumber,
+    required this.taskIndex,
+    required this.totalTasks,
+    required this.onTap,
+    required this.onReorder,
+    this.fontSize = 12.0,
+  });
+
+  @override
+  State<_ReorderableTaskTile> createState() => _ReorderableTaskTileState();
+}
+
+class _ReorderableTaskTileState extends State<_ReorderableTaskTile> {
+  int? _dragOverIndex; // Índice sobre o qual estamos passando
+
+  @override
+  Widget build(BuildContext context) {
+    final dueStatusColor = _getDueStatusColor();
+    final dueStatusText = _getDueStatusText();
+    final hasDueWarning = widget.task.getDueStatus() != DueStatus.ok;
+
+    return DragTarget<int>(
+      onWillAcceptWithDetails: (details) => true,
+      onAcceptWithDetails: (details) {
+        final fromIndex = details.data;
+        final toIndex = widget.taskIndex;
+        if (fromIndex != toIndex) {
+          widget.onReorder(fromIndex, toIndex);
+        }
+      },
+      builder: (context, candidateData, rejectedData) {
+        final isDragOverThis = candidateData.isNotEmpty;
+        return Container(
+          color: isDragOverThis
+              ? widget.task.getDueStatus() == DueStatus.ok
+                    ? Colors.blue[50]
+                    : Colors.blue[100]
+              : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 1.5),
+            child: Draggable<int>(
+              data: widget.taskIndex,
+              feedback: Material(
+                elevation: 6,
+                borderRadius: BorderRadius.circular(6),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[400],
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  constraints: const BoxConstraints(maxWidth: 220),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${widget.taskNumber}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          widget.task.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: widget.fontSize,
+                            height: 1.1,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              childWhenDragging: Opacity(
+                opacity: 0.4,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: dueStatusColor,
+                    borderRadius: BorderRadius.circular(6),
+                    border: hasDueWarning
+                        ? Border.all(color: dueStatusColor, width: 1.5)
+                        : null,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          color: hasDueWarning ? Colors.white : Colors.black12,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${widget.taskNumber}',
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              color: hasDueWarning
+                                  ? dueStatusColor
+                                  : Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.task.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: widget.fontSize * 0.95,
+                            height: 1.1,
+                            color: hasDueWarning
+                                ? Colors.white
+                                : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      if (hasDueWarning)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 3),
+                          child: Text(
+                            dueStatusText,
+                            style: TextStyle(
+                              fontSize: widget.fontSize * 0.7,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              child: InkWell(
+                onTap: widget.onTap,
+                borderRadius: BorderRadius.circular(6),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 1),
+                  decoration: BoxDecoration(
+                    color: dueStatusColor,
+                    borderRadius: BorderRadius.circular(6),
+                    border: hasDueWarning
+                        ? Border.all(color: dueStatusColor, width: 1.5)
+                        : null,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: hasDueWarning ? Colors.white : Colors.black12,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${widget.taskNumber}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: hasDueWarning
+                                  ? dueStatusColor
+                                  : Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          widget.task.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: widget.fontSize,
+                            height: 1.1,
+                            color: hasDueWarning
+                                ? Colors.white
+                                : Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      if (hasDueWarning)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            dueStatusText,
+                            style: TextStyle(
+                              fontSize: widget.fontSize * 0.75,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Color _getDueStatusColor() {
+    final status = widget.task.getDueStatus();
+    switch (status) {
+      case DueStatus.overdue:
+        return Colors.red[700]!;
+      case DueStatus.today:
+        return Colors.orange[700]!;
+      case DueStatus.oneDay:
+        return Colors.orange[400]!;
+      case DueStatus.twoDays:
+        return Colors.yellow[700]!;
+      case DueStatus.ok:
+        return Colors.grey[100]!;
+    }
+  }
+
+  String _getDueStatusText() {
+    final status = widget.task.getDueStatus();
+    if (status == DueStatus.ok) return '';
+
+    switch (status) {
+      case DueStatus.overdue:
+        return '⚠ VENCIDA';
+      case DueStatus.today:
+        return '⏰ HOJE';
+      case DueStatus.oneDay:
+        return '📅 1 dia';
+      case DueStatus.twoDays:
+        return '📅 2 dias';
+      case DueStatus.ok:
+        return '';
+    }
+  }
+}
+
+class _TaskTile extends StatelessWidget {
+  final Task task;
+  final int taskNumber;
+  final VoidCallback onTap;
+  final double fontSize;
+
+  const _TaskTile({
+    required this.task,
+    required this.taskNumber,
+    required this.onTap,
+    this.fontSize = 12.0,
+  });
+
+  Color _getDueStatusColor() {
+    final status = task.getDueStatus();
+    switch (status) {
+      case DueStatus.overdue:
+        return Colors.red[700]!;
+      case DueStatus.today:
+        return Colors.orange[700]!;
+      case DueStatus.oneDay:
+        return Colors.orange[400]!;
+      case DueStatus.twoDays:
+        return Colors.yellow[700]!;
+      case DueStatus.ok:
+        return Colors.grey[100]!;
+    }
+  }
+
+  String _getDueStatusText() {
+    final status = task.getDueStatus();
+    if (status == DueStatus.ok) return '';
+
+    switch (status) {
+      case DueStatus.overdue:
+        return '⚠ VENCIDA';
+      case DueStatus.today:
+        return '⏰ HOJE';
+      case DueStatus.oneDay:
+        return '📅 1 dia';
+      case DueStatus.twoDays:
+        return '📅 2 dias';
+      case DueStatus.ok:
+        return '';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dueStatusColor = _getDueStatusColor();
+    final dueStatusText = _getDueStatusText();
+    final hasDueWarning = task.getDueStatus() != DueStatus.ok;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1.5),
+      child: Draggable<Task>(
+        data: task,
+        feedback: Material(
+          elevation: 6,
+          borderRadius: BorderRadius.circular(6),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.blue[400],
+              borderRadius: BorderRadius.circular(6),
+            ),
+            constraints: const BoxConstraints(maxWidth: 220),
+            child: Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$taskNumber',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      height: 1.1,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        childWhenDragging: Opacity(
+          opacity: 0.4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            decoration: BoxDecoration(
+              color: dueStatusColor,
+              borderRadius: BorderRadius.circular(6),
+              border: hasDueWarning
+                  ? Border.all(color: dueStatusColor, width: 1.5)
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: hasDueWarning ? Colors.white : Colors.black12,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$taskNumber',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: hasDueWarning
+                            ? dueStatusColor
+                            : Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: fontSize * 0.95,
+                      height: 1.1,
+                      color: hasDueWarning ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ),
+                if (hasDueWarning)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 3),
+                    child: Text(
+                      dueStatusText,
+                      style: TextStyle(
+                        fontSize: fontSize * 0.7,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(6),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            margin: const EdgeInsets.symmetric(vertical: 1),
+            decoration: BoxDecoration(
+              color: dueStatusColor,
+              borderRadius: BorderRadius.circular(6),
+              border: hasDueWarning
+                  ? Border.all(color: dueStatusColor, width: 1.5)
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: hasDueWarning ? Colors.white : Colors.black12,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$taskNumber',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: hasDueWarning
+                            ? dueStatusColor
+                            : Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      height: 1.1,
+                      color: hasDueWarning ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (hasDueWarning)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Text(
+                      dueStatusText,
+                      style: TextStyle(
+                        fontSize: fontSize * 0.75,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

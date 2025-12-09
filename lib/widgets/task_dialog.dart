@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/quadrant_helper.dart';
+import '../providers/tasks_provider.dart';
+import 'task_suggestions.dart';
 
 class TaskDialog extends StatefulWidget {
   final Function(
@@ -89,6 +92,20 @@ class _TaskDialogState extends State<TaskDialog> {
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Título'),
               autofocus: true,
+            ),
+            // Widget de sugestões baseado no histórico
+            Consumer<TasksNotifier>(
+              builder: (context, tasksNotifier, _) {
+                return TaskSuggestions(
+                  allTasks: tasksNotifier.tasks,
+                  onTaskSelected: (selectedTitle) {
+                    // Opcionalmente, você pode carregar mais dados da tarefa selecionada
+                    // como descrição, urgência, importância, etc.
+                    // Por enquanto, apenas o título é preenchido automaticamente
+                  },
+                  titleController: _titleController,
+                );
+              },
             ),
             const SizedBox(height: 16),
             TextField(

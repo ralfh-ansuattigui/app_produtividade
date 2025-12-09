@@ -6,12 +6,11 @@ import '../providers/tasks_provider.dart';
 import '../widgets/quadrant_card.dart';
 import '../widgets/task_dialog.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/app_drawer.dart';
 import '../utils/quadrant_helper.dart';
 import 'eisenhower_info_screen.dart';
 
 class EisenhowerScreen extends StatefulWidget {
-  const EisenhowerScreen({Key? key}) : super(key: key);
+  const EisenhowerScreen({super.key});
 
   @override
   State<EisenhowerScreen> createState() => _EisenhowerScreenState();
@@ -182,10 +181,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                           colors: [
                             Theme.of(
                               context,
-                            ).colorScheme.primary.withOpacity(0.8),
+                            ).colorScheme.primary.withValues(alpha: 0.8),
                             Theme.of(
                               context,
-                            ).colorScheme.secondary.withOpacity(0.8),
+                            ).colorScheme.secondary.withValues(alpha: 0.8),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(8),
@@ -384,7 +383,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         initialQuadrant: quadrant,
         onSave: (title, description, selectedQuadrant, dueDate) async {
           final task = Task(
-            userId: 1, // TODO: get from auth provider
+            userId: 1, 
             title: title,
             description: description,
             quadrant: selectedQuadrant,

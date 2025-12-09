@@ -3,24 +3,46 @@
 ## 🎯 Comece por AQUI
 
 ### Para Começar Rápido (5 minutos)
+
 👉 **[QUICK_START.md](QUICK_START.md)**
+
 - Como instalar
 - Como rodar
 - Como testar
 - Referência rápida de métodos
 
 ### Para Entender a Arquitetura
+
 👉 **[ARCHITECTURE.md](ARCHITECTURE.md)**
+
 - Diagramas de fluxo
 - Camadas da aplicação
 - Estrutura de pastas
 - Modelos de dados
+
+### Para Entender os Fluxos de Chamadas
+
+👉 **[CALL_FLOWS_OVERVIEW.md](docs/CALL_FLOWS_OVERVIEW.md)**
+
+- Índice dos fluxos por funcionalidade
+- Diagramas ASCII de navegação, tarefas e branding
+- Componentes, métodos principais e entry points
+
+### Para Entender o Widget TaskSuggestions (v1.2.0)
+
+👉 **[TASK_SUGGESTIONS_WIDGET.md](docs/TASK_SUGGESTIONS_WIDGET.md)**
+
+- Lista auxiliar para seleção de tarefas
+- Deduplicação de histórico
+- Integração com TaskDialog
+- Performance e futuras melhorias
 
 ---
 
 ## 📖 Documentação Completa
 
 ### 1. 🚀 [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)
+
 **O que foi criado - Visão Geral Executiva**
 
 - Resumo de todos os arquivos criados
@@ -34,6 +56,7 @@
 ---
 
 ### 2. 🏗️ [ARCHITECTURE.md](ARCHITECTURE.md)
+
 **Arquitetura e Design - Diagramas Visuais**
 
 - Diagrama de fluxo de autenticação
@@ -43,12 +66,12 @@
 - Fluxo de criptografia
 - Ciclo de vida
 
-**Tempo de leitura:** 15 minutos
-**Ideal para:** Entender a estrutura
+**Tempo de leitura:** 15 minutos **Ideal para:** Entender a estrutura
 
 ---
 
 ### 3. 📚 [AUTHENTICATION.md](AUTHENTICATION.md)
+
 **Guia Técnico Completo - Referência**
 
 - Visão geral do sistema
@@ -61,12 +84,12 @@
 - Próximos passos
 - Troubleshooting
 
-**Tempo de leitura:** 20 minutos
-**Ideal para:** Referência técnica
+**Tempo de leitura:** 20 minutos **Ideal para:** Referência técnica
 
 ---
 
 ### 4. 📋 [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)
+
 **Resumo da Implementação - Checklist**
 
 - Arquivos criados
@@ -77,12 +100,12 @@
 - Como usar
 - Próximas melhorias
 
-**Tempo de leitura:** 10 minutos
-**Ideal para:** Verificação rápida
+**Tempo de leitura:** 10 minutos **Ideal para:** Verificação rápida
 
 ---
 
 ### 5. ⚡ [QUICK_START.md](QUICK_START.md)
+
 **Guia Rápido - Setup e Teste**
 
 - Arquivos criados
@@ -94,12 +117,12 @@
 - Troubleshooting
 - Próximas features
 
-**Tempo de leitura:** 8 minutos
-**Ideal para:** Iniciante
+**Tempo de leitura:** 8 minutos **Ideal para:** Iniciante
 
 ---
 
 ### 6. ✅ [CHECKLIST.md](CHECKLIST.md)
+
 **Verificação Final - Status**
 
 - Checklist de verificação
@@ -108,12 +131,12 @@
 - Próximas melhorias
 - Status geral
 
-**Tempo de leitura:** 5 minutos
-**Ideal para:** Verificar se tudo está pronto
+**Tempo de leitura:** 5 minutos **Ideal para:** Verificar se tudo está pronto
 
 ---
 
 ### 7. 🎉 [AUTH_COMPLETE.md](AUTH_COMPLETE.md)
+
 **Visão Geral Completa - Tudo em Um**
 
 - Resumo executivo
@@ -126,14 +149,14 @@
 - Próximas ações
 - Dicas de desenvolvimento
 
-**Tempo de leitura:** 25 minutos
-**Ideal para:** Leitura completa
+**Tempo de leitura:** 25 minutos **Ideal para:** Leitura completa
 
 ---
 
 ## 🛠️ Arquivos de Código
 
 ### Core System
+
 ```
 lib/database/database_factory.dart          ← SQLite Factory
 lib/models/user.dart                        ← User Model
@@ -143,6 +166,7 @@ lib/providers/auth_provider.dart            ← State Management
 ```
 
 ### UI
+
 ```
 lib/screens/auth_screen.dart                ← Login/Registro
 lib/screens/splash.dart                     ← Splash (atualizado)
@@ -150,6 +174,7 @@ lib/main.dart                               ← Main (atualizado)
 ```
 
 ### Exemplos
+
 ```
 lib/main_with_provider.dart                 ← Exemplo com Provider
 ```
@@ -159,6 +184,7 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
 ## 📊 Roteiro de Leitura
 
 ### Se você quer começar AGORA
+
 ```
 1. QUICK_START.md (5 min)
    ↓
@@ -166,11 +192,13 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
    ↓
 3. Testar a autenticação (5 min)
 ```
+
 **Total: ~12 minutos**
 
 ---
 
 ### Se você quer ENTENDER TUDO
+
 ```
 1. QUICK_START.md (8 min)
    ↓
@@ -182,11 +210,13 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
    ↓
 5. Rodar e testar (10 min)
 ```
+
 **Total: ~1.5 horas**
 
 ---
 
 ### Se você quer uma VISÃO GERAL
+
 ```
 1. IMPLEMENTATION_COMPLETE.md (10 min)
    ↓
@@ -194,6 +224,7 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
    ↓
 3. QUICK_START.md (8 min)
 ```
+
 **Total: ~30 minutos**
 
 ---
@@ -201,24 +232,31 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
 ## 🎯 Por Objetivo
 
 ### Quero começar a usar agora
+
 → [QUICK_START.md](QUICK_START.md)
 
 ### Quero entender a arquitetura
+
 → [ARCHITECTURE.md](ARCHITECTURE.md)
 
 ### Preciso de referência técnica
+
 → [AUTHENTICATION.md](AUTHENTICATION.md)
 
 ### Quero saber exatamente o que foi feito
+
 → [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)
 
 ### Preciso verificar se tudo está OK
+
 → [CHECKLIST.md](CHECKLIST.md)
 
 ### Quero uma leitura completa
+
 → [AUTH_COMPLETE.md](AUTH_COMPLETE.md)
 
 ### Quero um resumo
+
 → [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)
 
 ---
@@ -228,24 +266,29 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
 ### Preciso de informações sobre...
 
 **Banco de Dados**
+
 - DatabaseFactory → AUTHENTICATION.md (seção "Arquitetura do Banco")
 - Tabelas SQL → AUTHENTICATION.md (seção "Fluxo de Autenticação")
 
 **Autenticação**
+
 - Registro → AUTHENTICATION.md (seção "Fluxo de Autenticação")
 - Login → AUTHENTICATION.md (seção "Fluxo de Autenticação")
 - Segurança → AUTH_COMPLETE.md (seção "Segurança Implementada")
 
 **Código**
+
 - Exemplos → lib/main_with_provider.dart
 - Referência → AUTHENTICATION.md (seção "Como Usar")
 
 **Setup**
+
 - Instalar → QUICK_START.md (seção "O que fazer agora")
 - Rodar → QUICK_START.md (seção "Como Usar")
 - Testar → QUICK_START.md (seção "Métodos Principais")
 
 **Problemas**
+
 - Erros → QUICK_START.md (seção "Troubleshooting")
 - Ajuda → AUTHENTICATION.md (seção "Próximos Passos")
 
@@ -254,28 +297,34 @@ lib/main_with_provider.dart                 ← Exemplo com Provider
 ## 📱 Documentação por Arquivo
 
 ### database_factory.dart
+
 - Descrição → AUTHENTICATION.md (DatabaseFactory)
 - Como usar → AUTHENTICATION.md (Como Usar)
 - Exemplo → lib/main_with_provider.dart
 
 ### user.dart
+
 - Descrição → ARCHITECTURE.md (Modelo de Dados - User)
 - Exemplo → AUTHENTICATION.md (Como Usar)
 
 ### auth_service.dart
+
 - Descrição → AUTHENTICATION.md (AuthService)
 - Método → QUICK_START.md (Métodos Principais)
 
 ### auth_repository.dart
+
 - Descrição → AUTHENTICATION.md (AuthRepository)
 - Método → QUICK_START.md (Métodos Principais)
 - Exemplo → AUTHENTICATION.md (Exemplo Completo)
 
 ### auth_provider.dart
+
 - Descrição → AUTH_COMPLETE.md (Auth Provider)
 - Exemplo → lib/main_with_provider.dart
 
 ### auth_screen.dart
+
 - Descrição → AUTH_COMPLETE.md (Tela de Autenticação)
 - Features → AUTH_COMPLETE.md (Features)
 
@@ -318,16 +367,16 @@ Depois de ler a documentação:
 
 ## ✨ Resumo dos Arquivos
 
-| Arquivo | Tipo | Leitura | Propósito |
-|---------|------|---------|----------|
-| QUICK_START.md | Doc | 8 min | Guia rápido |
-| ARCHITECTURE.md | Doc | 15 min | Diagramas |
-| AUTHENTICATION.md | Doc | 20 min | Referência |
-| IMPLEMENTATION_COMPLETE.md | Doc | 10 min | Visão geral |
-| AUTH_COMPLETE.md | Doc | 25 min | Completo |
-| IMPLEMENTATION_SUMMARY.md | Doc | 10 min | Resumo |
-| CHECKLIST.md | Doc | 5 min | Status |
-| lib/main_with_provider.dart | Código | - | Exemplo |
+| Arquivo                     | Tipo   | Leitura | Propósito   |
+| --------------------------- | ------ | ------- | ----------- |
+| QUICK_START.md              | Doc    | 8 min   | Guia rápido |
+| ARCHITECTURE.md             | Doc    | 15 min  | Diagramas   |
+| AUTHENTICATION.md           | Doc    | 20 min  | Referência  |
+| IMPLEMENTATION_COMPLETE.md  | Doc    | 10 min  | Visão geral |
+| AUTH_COMPLETE.md            | Doc    | 25 min  | Completo    |
+| IMPLEMENTATION_SUMMARY.md   | Doc    | 10 min  | Resumo      |
+| CHECKLIST.md                | Doc    | 5 min   | Status      |
+| lib/main_with_provider.dart | Código | -       | Exemplo     |
 
 ---
 
@@ -339,6 +388,4 @@ Escolha um documento acima e comece a explorar!
 
 ---
 
-**Última atualização:** 05/12/2025
-**Versão:** 1.0
-**Status:** ✅ Completo
+**Última atualização:** 05/12/2025 **Versão:** 1.0 **Status:** ✅ Completo

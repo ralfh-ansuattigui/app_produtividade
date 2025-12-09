@@ -10,13 +10,13 @@ class QuadrantDetailScreen extends StatelessWidget {
   final Function(Task) onTaskTap;
 
   const QuadrantDetailScreen({
-    Key? key,
+    super.key,
     required this.quadrant,
     required this.title,
     required this.color,
     required this.tasks,
     required this.onTaskTap,
-  }) : super(key: key);
+  }) ;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class QuadrantDetailScreen extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: color.withOpacity(0.1),
+          backgroundColor: color.withValues(alpha: 0.1),
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.close),
@@ -130,14 +130,14 @@ class QuadrantDetailScreen extends StatelessWidget {
                                   ),
                               ],
                             ),
-                            if (task.description.isNotEmpty) ...[
+                            if (task.description?.isNotEmpty ?? false) ...[
                               const SizedBox(height: 8),
                               Text(
-                                task.description,
+                                task.description!,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: hasDueWarning
-                                      ? Colors.white.withOpacity(0.95)
+                                      ? Colors.white.withAlpha(243)
                                       : Colors.black87,
                                   height: 1.4,
                                 ),
