@@ -149,20 +149,13 @@ class _TaskHistoryDialogState extends State<TaskHistoryDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.inbox,
-                    size: 48,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     _searchController.text.isEmpty
                         ? 'Nenhum histórico de tarefas'
                         : 'Nenhuma tarefa encontrada',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -174,8 +167,9 @@ class _TaskHistoryDialogState extends State<TaskHistoryDialog> {
                 itemCount: _filteredTitles.length,
                 itemBuilder: (context, index) {
                   final title = _filteredTitles[index];
-                  final task = widget.allTasks
-                      .firstWhere((t) => t.title == title);
+                  final task = widget.allTasks.firstWhere(
+                    (t) => t.title == title,
+                  );
 
                   return ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -192,10 +186,7 @@ class _TaskHistoryDialogState extends State<TaskHistoryDialog> {
                       task.description ?? 'Sem descrição',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                     trailing: Icon(
                       task.isCompleted
@@ -223,10 +214,7 @@ class _TaskHistoryDialogState extends State<TaskHistoryDialog> {
           child: const Text('Fechar'),
         ),
       ],
-      insetPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 24,
-      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     );
   }
 }
@@ -277,75 +265,6 @@ class TaskSuggestions extends StatelessWidget {
         .where((title) => title.toLowerCase().contains(inputLower))
         .toList();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<TextEditingValue>(
-      valueListenable: titleController,
-      builder: (context, value, _) {
-        final suggestions = _filterSuggestions(value.text);
-
-        if (suggestions.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return Container(
-          margin: const EdgeInsets.only(top: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!, width: 1),
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.grey[50],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8, left: 8),
-                child: Text(
-                  '📋 Histórico de Tarefas',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: suggestions
-                    .map(
-                      (title) => InkWell(
-                        onTap: () {
-                          onTaskSelected(title);
-                          titleController.text = title;
-                        },
-                        borderRadius: BorderRadius.circular(20),
-                        child: Chip(
-                          label: Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          backgroundColor: Colors.blue[50],
-                          side: BorderSide(color: Colors.blue[200]!),
-                          onDeleted: null, // Não deletar, apenas selecionar
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
 
   @override
   Widget build(BuildContext context) {
