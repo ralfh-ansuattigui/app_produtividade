@@ -4,7 +4,9 @@
 
 ### Como Funciona
 
-O widget `TaskSuggestions` aparece **automaticamente** no `TaskDialog` quando você abre a tela de adicionar tarefa. Não requer ação adicional do desenvolvedor!
+O widget `TaskSuggestions` aparece **automaticamente** no `TaskDialog` quando
+você abre a tela de adicionar tarefa. Não requer ação adicional do
+desenvolvedor!
 
 ### Para o Usuário Final
 
@@ -189,12 +191,14 @@ List<String> _filterSuggestions(String input) {
 ### Opção A: Chips (Padrão)
 
 **Vantagens:**
+
 - ✅ Visualmente atrativo
 - ✅ Fácil de clicar
 - ✅ Mostra múltiplas opções simultaneamente
 - ✅ Bom para 5-10 sugestões
 
 **Código:**
+
 ```dart
 return TaskSuggestions(
   allTasks: tasksNotifier.tasks,
@@ -204,6 +208,7 @@ return TaskSuggestions(
 ```
 
 **Resultado:**
+
 ```
 📋 Histórico de Tarefas
 [Estudar] [Exercitar] [Ler]
@@ -215,12 +220,14 @@ return TaskSuggestions(
 ### Opção B: Dropdown
 
 **Vantagens:**
+
 - ✅ Compacto (ocupa menos espaço)
 - ✅ Bom para muitas sugestões (>20)
 - ✅ Melhor em telas pequenas
 - ✅ Padrão Material Design
 
 **Código:**
+
 ```dart
 return TaskSuggestionsDropdown(
   allTasks: tasksNotifier.tasks,
@@ -230,6 +237,7 @@ return TaskSuggestionsDropdown(
 ```
 
 **Resultado:**
+
 ```
 Ou selecione do histórico:
 ┌──────────────────────────────┐
@@ -338,6 +346,7 @@ Consumer<TasksNotifier>(
 **Arquivo:** `lib/widgets/task_suggestions.dart`
 
 **Linha:** ~50
+
 ```dart
 // Mudar de 5 para 10:
 return _getUniqueTitles().take(10).toList();
@@ -352,6 +361,7 @@ return _getUniqueTitles().take(10).toList();
 **Opções:**
 
 1. **Case-Insensitive (Normalizado)**
+
 ```dart
 if (task.title.trim().toLowerCase().isEmpty) continue;
 if (!titleSet.contains(task.title.trim().toLowerCase())) {
@@ -360,6 +370,7 @@ if (!titleSet.contains(task.title.trim().toLowerCase())) {
 ```
 
 2. **Com Remoção de Whitespace Extra**
+
 ```dart
 final normalized = task.title.trim().replaceAll(RegExp(r'\s+'), ' ');
 if (!titleSet.contains(normalized)) {
@@ -368,6 +379,7 @@ if (!titleSet.contains(normalized)) {
 ```
 
 3. **Com Remoção de Acentos**
+
 ```dart
 String removeAccents(String str) {
   var baseChars = 'àáâãäåèéêëìíîïòóôõöùúûüç';
@@ -405,6 +417,7 @@ Chip(
 **Causa:** `allTasks` está vazio
 
 **Solução:**
+
 ```dart
 // Verificar se TasksNotifier carregou dados
 print('Tasks loaded: ${tasksNotifier.tasks.length}');
@@ -426,6 +439,7 @@ void initState() {
 **Causa:** Títulos têm case diferente ("Estudar" vs "estudar")
 
 **Solução:** Normalizar em `_getUniqueTitles()`:
+
 ```dart
 final normalized = task.title.trim().toLowerCase();
 if (!titleSet.contains(normalized)) {
@@ -444,6 +458,7 @@ if (!titleSet.contains(normalized)) {
 **Causa:** `titleController` não está sendo usado corretamente
 
 **Solução:**
+
 ```dart
 // Verificar que titleController está vinculado:
 TextField(
@@ -462,12 +477,12 @@ TaskSuggestions(
 
 ## 📚 Referências
 
-| Arquivo | Propósito | Linhas |
-|---------|----------|--------|
-| lib/widgets/task_suggestions.dart | Widget principal | 250+ |
-| lib/widgets/task_dialog.dart | Integração | 5-10 |
-| docs/TASK_SUGGESTIONS_WIDGET.md | Documentação técnica | 400+ |
-| docs/TASK_SUGGESTIONS_IMPLEMENTATION.md | Resumo executivo | 360+ |
+| Arquivo                                 | Propósito            | Linhas |
+| --------------------------------------- | -------------------- | ------ |
+| lib/widgets/task_suggestions.dart       | Widget principal     | 250+   |
+| lib/widgets/task_dialog.dart            | Integração           | 5-10   |
+| docs/TASK_SUGGESTIONS_WIDGET.md         | Documentação técnica | 400+   |
+| docs/TASK_SUGGESTIONS_IMPLEMENTATION.md | Resumo executivo     | 360+   |
 
 ---
 
@@ -507,6 +522,6 @@ TaskSuggestions(
 
 ---
 
-**Status:** ✅ Pronto para Uso  
-**Versão:** v1.2.0-dev  
+**Status:** ✅ Pronto para Uso\
+**Versão:** v1.2.0-dev\
 **Última Atualização:** 2024

@@ -88,24 +88,29 @@ class _TaskDialogState extends State<TaskDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Título'),
-              autofocus: true,
-            ),
-            // Widget de sugestões baseado no histórico
-            Consumer<TasksNotifier>(
-              builder: (context, tasksNotifier, _) {
-                return TaskSuggestions(
-                  allTasks: tasksNotifier.tasks,
-                  onTaskSelected: (selectedTitle) {
-                    // Opcionalmente, você pode carregar mais dados da tarefa selecionada
-                    // como descrição, urgência, importância, etc.
-                    // Por enquanto, apenas o título é preenchido automaticamente
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(labelText: 'Título'),
+                    autofocus: true,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Botão para abrir popup de histórico
+                Consumer<TasksNotifier>(
+                  builder: (context, tasksNotifier, _) {
+                    return TaskHistoryButton(
+                      allTasks: tasksNotifier.tasks,
+                      onTaskSelected: (selectedTitle) {
+                        // Callback para ações adicionais
+                      },
+                      titleController: _titleController,
+                    );
                   },
-                  titleController: _titleController,
-                );
-              },
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             TextField(

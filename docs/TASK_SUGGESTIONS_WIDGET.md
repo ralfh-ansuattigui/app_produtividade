@@ -2,16 +2,21 @@
 
 ## Visão Geral
 
-O widget `TaskSuggestions` implementa uma **lista auxiliar para seleção rápida de tarefas** baseada no histórico de tarefas já criadas. Este widget reduz a necessidade de digitação repetida ao criar novas tarefas e melhora a experiência do usuário.
+O widget `TaskSuggestions` implementa uma **lista auxiliar para seleção rápida
+de tarefas** baseada no histórico de tarefas já criadas. Este widget reduz a
+necessidade de digitação repetida ao criar novas tarefas e melhora a experiência
+do usuário.
 
 ## Características Principais
 
 ### 1. **Deduplicação de Tarefas**
+
 - Remove títulos duplicados mantendo apenas um registro
 - Ordena por **data de atualização** (tarefas mais recentes primeiro)
 - Preserva a frequência de uso para análise de padrões
 
 ### 2. **Filtros Inteligentes**
+
 - **Filtro Dinâmico**: Mostra sugestões baseadas no texto digitado
 - **Mostrar Top 5**: Exibe os 5 títulos mais recentes quando campo está vazio
 - **Case-Insensitive**: Busca não diferencia maiúsculas/minúsculas
@@ -19,6 +24,7 @@ O widget `TaskSuggestions` implementa uma **lista auxiliar para seleção rápid
 ### 3. **Duas Variações de UI**
 
 #### Variação 1: TaskSuggestions (Chips)
+
 ```dart
 TaskSuggestions(
   allTasks: tasksNotifier.tasks,
@@ -26,12 +32,14 @@ TaskSuggestions(
   titleController: titleController,
 )
 ```
+
 - Exibe sugestões como **chips interativos**
 - Ideal para poucos títulos (até ~10)
 - Mais visualmente atrativo
 - Boa responsividade em telas pequenas
 
 #### Variação 2: TaskSuggestionsDropdown
+
 ```dart
 TaskSuggestionsDropdown(
   allTasks: tasksNotifier.tasks,
@@ -39,6 +47,7 @@ TaskSuggestionsDropdown(
   titleController: titleController,
 )
 ```
+
 - Exibe sugestões em **dropdown**
 - Ideal para muitos títulos (>20)
 - Economiza espaço vertical
@@ -83,6 +92,7 @@ print('Top 5: ${stats.topTitles}');            // List<String>
 ```
 
 **Propriedades:**
+
 - `totalTasks`: Total de tarefas no histórico
 - `uniqueTitles`: Quantidade de títulos únicos
 - `completedTasks`: Quantidade de tarefas concluídas
@@ -91,6 +101,7 @@ print('Top 5: ${stats.topTitles}');            // List<String>
 ## Estratégia de Deduplicação
 
 ### Critério Atual
+
 ```dart
 // Deduplicação por TÍTULO EXATO
 if (task.title.isNotEmpty && !titleSet.contains(task.title)) {
@@ -99,6 +110,7 @@ if (task.title.isNotEmpty && !titleSet.contains(task.title)) {
 ```
 
 **Comportamento:**
+
 - "Estudar" e "Estudar" → 1 sugestão
 - "Estudar" e "estudar" → 2 sugestões (case-sensitive)
 - "Estudar Flutter" e "Estudar Flutter" → 1 sugestão
@@ -130,6 +142,7 @@ String removeAccents(String str) {
 ## Integrações Futuras (v1.2.0+)
 
 ### Sugestões Avançadas
+
 ```dart
 // Sugerir descrição, urgência, importância baseado na tarefa anterior
 Future<Task?> _getFullTaskSuggestion(String title) async {
@@ -138,6 +151,7 @@ Future<Task?> _getFullTaskSuggestion(String title) async {
 ```
 
 ### AutoFill de Campos
+
 ```dart
 void _fillFromHistory(Task historicTask) {
   _titleController.text = historicTask.title;
@@ -149,6 +163,7 @@ void _fillFromHistory(Task historicTask) {
 ```
 
 ### Busca Avançada
+
 ```dart
 // Filtrar por data (últimas 30 dias)
 // Filtrar por quadrante
@@ -157,6 +172,7 @@ void _fillFromHistory(Task historicTask) {
 ```
 
 ### Analytics
+
 ```dart
 // Rastrear qual sugestão foi selecionada
 // Medir frequência de reutilização
@@ -166,12 +182,14 @@ void _fillFromHistory(Task historicTask) {
 ## Performance
 
 ### Otimizações Aplicadas
+
 - ✅ Deduplicação feita em-memória (O(n))
 - ✅ Ordenação por data de atualização (O(n log n))
 - ✅ Filtro dinâmico usa contains (O(n)) – Aceitável para <1000 itens
 - ✅ ValueListenableBuilder reescuta apenas quando titleController muda
 
 ### Melhorias Futuras
+
 ```dart
 // Usar Riverpod/StateNotifier para cache
 // Implementar busca fuzzy com algoritmo Levenshtein
@@ -197,17 +215,18 @@ testWidgets('TaskHistoryStats calcula valores corretos', ...);
 
 ## Troubleshooting
 
-| Problema | Causa | Solução |
-|----------|-------|---------|
-| Sugestões não aparecem | `allTasks` vazio | Verificar se TasksNotifier carregou dados |
-| Duplicatas aparecem | Case diferente | Adicionar normalização em `_getUniqueTitles()` |
-| UI lenta com muitos chips | Renderização pesada | Usar `TaskSuggestionsDropdown` |
-| Clique não preenche campo | Callback vazio | Verificar `onTaskSelected` callback |
-| Sugestão desaparece após digitar | TextField não é ValueListenable | Usar `TextEditingController` (✓ já feito) |
+| Problema                         | Causa                           | Solução                                        |
+| -------------------------------- | ------------------------------- | ---------------------------------------------- |
+| Sugestões não aparecem           | `allTasks` vazio                | Verificar se TasksNotifier carregou dados      |
+| Duplicatas aparecem              | Case diferente                  | Adicionar normalização em `_getUniqueTitles()` |
+| UI lenta com muitos chips        | Renderização pesada             | Usar `TaskSuggestionsDropdown`                 |
+| Clique não preenche campo        | Callback vazio                  | Verificar `onTaskSelected` callback            |
+| Sugestão desaparece após digitar | TextField não é ValueListenable | Usar `TextEditingController` (✓ já feito)      |
 
 ## Changelog
 
 ### v1.0.0 (Inicial - v1.2.0-dev)
+
 - ✅ Implementação de `TaskSuggestions` com chips
 - ✅ Implementação de `TaskSuggestionsDropdown`
 - ✅ Classe `TaskHistoryStats` para análise
@@ -217,6 +236,7 @@ testWidgets('TaskHistoryStats calcula valores corretos', ...);
 - ✅ Filtro dinâmico case-insensitive
 
 ### Planned (v1.2.0+)
+
 - 🔲 AutoFill de múltiplos campos
 - 🔲 Busca fuzzy com typo tolerance
 - 🔲 Filtros avançados (data, quadrante, status)
@@ -233,6 +253,6 @@ testWidgets('TaskHistoryStats calcula valores corretos', ...);
 
 ---
 
-**Última Atualização**: v1.2.0-dev  
-**Autor**: Copilot  
+**Última Atualização**: v1.2.0-dev\
+**Autor**: Copilot\
 **Status**: ✅ Implementado e Integrado
